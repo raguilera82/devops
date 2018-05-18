@@ -1,0 +1,22 @@
+---
+# file: roles/jenkins/tasks/node.yml
+
+# Necesary to install NVM and execute javascript test with node in jenkins jobs
+- name: "Node | Ensure .profile exist in home"
+  become_user: "jenkins"
+  file:
+      path: "{{ jenkins_base_dir }}/.profile"
+      state: "touch"
+      mode: "0750"
+
+- name: "Node | Install NVM"
+  become_user: "jenkins"
+  shell: "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.6/install.sh | bash"
+
+- name: "Node | Install Node"
+  become_user: "jenkins"
+  shell: ". ~/.profile && nvm install v{{ jenkins_node_version }}"
+
+- name: "Node | Tell the machine to use our node Version to install Gulp"
+  become_user: "jenkins"
+  shell: ". ~/.profile && nvm use {{ jenkins_node_version }}; npm -g install gulp@{{ jenkins_gulp_version }}"

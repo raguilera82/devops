@@ -1,0 +1,6 @@
+---
+# file: roles/java/defaults/Debian_properties.yml
+
+java_security_dir: "/usr/lib/jvm/java-8-oracle/jre/lib/security"
+
+java_repository: "ppa:webupd8team/java"

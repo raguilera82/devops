@@ -1,0 +1,9 @@
+---
+# file: /roles/java/tasks/main.yml
+
+- include_vars: "{{ role_path }}/defaults/{{ ansible_os_family }}_properties.yml"
+  when: install_java == true
+
+- name: "Installing {{ java_version }} - {{ java_rpm_download_jdk_uri }}"
+  include: "{{ ansible_os_family }}_install.yml"
+  when: install_java == true

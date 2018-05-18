@@ -1,0 +1,7 @@
+---
+
+dependencies:
+- { role: epel, when: ansible_os_family == 'RedHat' }
+- { role: httpd, when: ansible_os_family == 'RedHat' }
+- { role: mysql, when: ansible_os_family == 'RedHat' }
+- { role: php, when: ansible_os_family == 'RedHat' }

@@ -1,0 +1,5 @@
+---
+# file: roles/java/meta/main.yml
+
+dependencies:
+    - { role: wget, when: ansible_os_family == 'RedHat' and ansible_distribution == 'CentOS' }

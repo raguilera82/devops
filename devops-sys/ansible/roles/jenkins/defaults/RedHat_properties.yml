@@ -1,0 +1,10 @@
+---
+# file: roles/jenkins/defaults/main.yml
+
+jenkins_repository_download_url: "http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo"
+jenkins_repository_location: "/etc/yum.repos.d/jenkins.repo"
+
+# jenkins_version: "2.19.4-1.1"
+jenkins_version: "2.73.1-1.1"
+
+jenkins_config_file_location: "/etc/sysconfig/jenkins"

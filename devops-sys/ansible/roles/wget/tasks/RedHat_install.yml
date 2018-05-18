@@ -1,0 +1,7 @@
+---
+# file: roles/wget/tasks/main.yml
+
+- name: "{{ ansible_os_family }} | Install wget"
+  yum:
+      name: "wget"
+      state: "installed"

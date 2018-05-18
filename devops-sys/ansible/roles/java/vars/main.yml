@@ -1,0 +1,4 @@
+---
+# file: roles/java/vars/main.yml
+
+java_profile: "{{ profile }}"

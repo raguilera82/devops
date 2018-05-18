@@ -1,0 +1,13 @@
+- hosts: int
+  gather_facts: false
+  become: yes
+  vars:
+    - ansible_os_family: RedHat
+    - ansible_distribution: CentOS
+    - jenkins_version: '2.73.2'
+    - jenkins_home: /home/jenkins
+    - install_java: false
+  roles:
+   - python_minimal
+   - jenkins
+     

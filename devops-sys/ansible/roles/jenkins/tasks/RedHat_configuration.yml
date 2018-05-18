@@ -1,0 +1,10 @@
+---
+# file: roles/jenkins/tasks/RedHat_configuration.yml
+
+- name: "{{ ansible_os_family }} | Config | Add profile to jenkins"
+  lineinfile:
+      dest: "{{ jenkins_config_file_location }}"
+      line: 'JENKINS_ARGS="--prefix=/jenkins"'
+      regexp: '^JENKINS_ARGS='
+      state: "present"
+  notify: restart jenkins

@@ -1,0 +1,13 @@
+- hosts: int
+  gather_facts: false
+  become: yes
+  vars:
+    - ansible_os_family: RedHat
+    - ansible_distribution: CentOS
+    - nexus_version: '3.6.0-02'
+    - nexus_data: /opt/nexus
+    - install_java: false
+  roles:
+   - python_minimal
+   - nexus
+     

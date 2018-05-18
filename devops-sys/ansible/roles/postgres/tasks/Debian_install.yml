@@ -1,0 +1,21 @@
+---
+# file: /roles/postgres/task/Debian_install.yml
+
+- name: "{{ ansible_os_family }} | Add PostgreSQL repository"
+  apt_repository:
+      repo: "deb https://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main"
+      update_cache: yes
+
+- name: "{{ ansible_os_family }} | Add PostgreSQL key"
+  apt_key:
+      url: "https://postgresql.org/media/keys/ACCC4CF8.asc"
+      state: present
+
+- name: "{{ ansible_os_family }} | Ensure PostgreSQL are installed"
+  apt:
+      name: "{{ item }}"
+      update_cache: yes
+  with_items:
+      - "postgresql-{{ postgres_version }}"
+      - "postgresql-contrib-{{ postgres_version }}"
+      - python-psycopg2 # Necessary to use "postgresql_db" "postgresql_user"

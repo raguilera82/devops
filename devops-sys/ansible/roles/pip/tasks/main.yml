@@ -1,0 +1,17 @@
+---
+# file: roles/pip/tasks/main.yml
+
+- include: "{{ ansible_os_family }}_install.yml"
+  when: ansible_distribution != 'Amazon'
+
+- name: "Install pip to manage Ansible installation"
+  command: "easy_install pip"
+  when: ansible_distribution != 'Amazon'
+
+- name: "Check if {{ ansible_distribution }} specific configuration exists"
+  become: No
+  local_action: stat path="{{ role_path }}/tasks/{{ ansible_os_family }}/{{ ansible_distribution }}_install.yml"
+  register: "os_specific_config"
+
+- include: "{{ ansible_os_family }}/{{ ansible_distribution }}_install.yml"
+  when: os_specific_config.stat.exists

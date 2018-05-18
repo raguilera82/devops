@@ -1,0 +1,6 @@
+---
+# file: roles/sonar/meta/main.yml
+
+dependencies:
+    - { role: java }
+    - { role: unzip }

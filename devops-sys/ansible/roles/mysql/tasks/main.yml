@@ -1,0 +1,49 @@
+---
+
+- name: Download mysql repository
+  shell: wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+
+- name: Add repository
+  become: true
+  shell: rpm -ivh mysql-community-release-el7-5.noarch.rpm
+  ignore_errors: true
+
+- name: Update yum
+  become: true
+  shell: yum update -y
+
+- name: "Install mysql server and dependencies"
+  yum:
+     name: "{{ item }}"
+     state: "present"
+     update_cache: "yes"
+  with_items:
+    - mysql-server
+    - gcc
+    - python-devel
+    - mysql-devel
+  ignore_errors: true
+
+- name: "Start service"
+  become: true
+  shell: "systemctl start mysqld"
+
+- name: "Enable service"
+  become: true
+  shell: "systemctl enable mysqld"
+
+- name: Install the mysql-python through pip
+  become: true
+  pip:
+    name: "{{ item }}"
+    state: forcereinstall
+  with_items:
+    - mysql-python
+
+- name: "Set root password"
+  mysql_user: name=root host={{item}} password={{mysql_root_password | mandatory}} state=present
+  with_items:
+    - '::1'
+    - '127.0.0.1'
+    - localhost
+  ignore_errors: true

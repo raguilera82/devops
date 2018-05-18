@@ -1,0 +1,7 @@
+---
+
+#- import_playbook: install_nexus.yml
+#- import_playbook: install_jenkins.yml
+#- import_playbook: install_sonar.yml
+#- import_playbook: install_testlink.yml
+- import_playbook: install_gitlab.yml

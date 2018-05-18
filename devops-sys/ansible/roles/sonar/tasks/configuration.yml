@@ -1,0 +1,58 @@
+---
+# file: /roles/sonar/tasks/configuration.yml
+
+- name: "Config | Make Sonar runned by Sonar user"
+  replace:
+      dest: "{{ sonar_home }}/bin/linux-x86-64/sonar.sh"
+      regexp: "#RUN_AS_USER=(.*)$"
+      replace: "RUN_AS_USER=sonar"
+
+- name: "Config | Add Sonar links for service management"
+  file:
+      src: "{{ sonar_home }}/bin/linux-x86-64/sonar.sh"
+      dest: "{{ item }}"
+      state: link
+  with_items:
+    - /usr/bin/sonar
+    - /etc/init.d/sonar
+
+- name: "Create database sonar"
+  become_user: postgres
+  become: true
+  postgresql_db:
+    name: "{{ database_name }}"
+    encoding: UTF-8
+  when: sonar_postgresql_db_enabled == true
+
+- name: "Create user sonar role on postgresql"
+  become_user: postgres
+  become: true
+  postgresql_user:
+    db: "{{ database_name }}"
+    name: "{{ database_user }}"
+    password: "{{ database_password }}"
+  when: sonar_postgresql_db_enabled == true
+
+- name: Grant permissions to sonar user in sonar database
+  become_user: postgres
+  become: true
+  postgresql_privs:
+    db: "{{ database_name }}"
+    privs: ALL
+    type: database
+    role: "{{ database_user }}"
+    admin_option: true
+
+- name: "Config | Copy Sonar properties"
+  template:
+      src: sonar.properties
+      dest: "{{ sonar_home }}/conf/sonar.properties"
+  notify: "restart sonar"
+
+- name: "Config | Copy pg_hba.conf"
+  become: true
+  template:
+      src: pg_hba.conf
+      dest: "/var/lib/pgsql/{{ postgresql_major_version }}.{{ postgresql_minor_version }}/data/pg_hba.conf"
+  notify: "restart sonar"
+  when: sonar_postgresql_db_enabled == true

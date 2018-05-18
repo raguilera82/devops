@@ -1,0 +1,14 @@
+---
+# file: /roles/nexus/tasks/nexus_setup.yml
+
+- name: "Create Nexus group"
+  group:
+      name: "nexus"
+      state: "present"
+
+- name: "Create Nexus user"
+  user:
+      name: "nexus"
+      comment: "Nexus"
+      group: "nexus"
+      createhome: "yes"

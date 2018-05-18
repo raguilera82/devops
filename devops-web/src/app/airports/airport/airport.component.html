@@ -1,0 +1,5 @@
+<div *ngFor="let airport of (airports$ | async)">
+  <p>Code: {{airport.code}}</p>
+  <p>Name: {{airport.name}}</p>
+  <p>City: {{airport.city.name}}</p>
+</div>

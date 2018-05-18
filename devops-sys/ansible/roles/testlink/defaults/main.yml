@@ -1,0 +1,5 @@
+---
+
+testlink_version: 1.9.16
+user_password: password
+apache_vhost_template: "vhost.conf.j2"

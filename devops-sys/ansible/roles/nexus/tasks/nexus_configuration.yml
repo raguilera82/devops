@@ -1,0 +1,69 @@
+---
+# file: /roles/nexus/tasks/nexus_configuration.yml
+
+- name: "Set NEXUS_HOME environment variable"
+  lineinfile:
+      dest: /etc/environment
+      regexp: "^export NEXUS_HOME.*"
+      line: "export NEXUS_HOME={{ nexus_home }}"
+      insertbefore: "^PATH.*"
+
+#- name: "Move work directory to data directory"
+#  shell: "mv {{ nexus_base_dir }}/sonatype-work {{ nexus_data_dir }}/sonatype-work"
+#  register: "result"
+#  failed_when: "'Directory not empty' not in result.stderr and '' != result.stderr"
+
+#- name: "Change nexus work directory in nexus.properties file"
+#  replace:
+#      dest: "{{ nexus_home }}/conf/nexus.properties"
+#      regexp: "^nexus-work=(.*)$"
+#      replace: "nexus-work={{ nexus_data_dir }}/sonatype-work"
+
+- name: "Change ownership of nexus home"
+  file:
+      path: "{{ nexus_base_dir }}/nexus-{{ nexus_version }}"
+      owner: nexus
+      group: nexus
+      recurse: yes
+
+#- name: "Change ownership of nexus data directory"
+#  file:
+#      path: "{{ nexus_data_dir }}"
+#      owner: nexus
+#      group: nexus
+#      recurse: yes
+
+- name: "Make nexus runned by nexus user"
+  replace:
+      dest: "{{ nexus_home }}/bin/nexus"
+      regexp: "#RUN_AS_USER=(.*)$"
+      replace: "RUN_AS_USER=nexus"
+
+- name: "Change nexus home in binary file"
+  replace:
+      dest: "{{ nexus_home }}/bin/nexus"
+      regexp: "^NEXUS_HOME=(.*)"
+      replace: "NEXUS_HOME={{ nexus_home }}"
+
+- name: "Change nexus piddir in binary file"
+  replace:
+      dest: "{{ nexus_home }}/bin/nexus"
+      regexp: "^#PIDDIR=(.*)"
+      replace: "PIDDIR=/home/nexus"
+
+- name: "Create symbolic link to /etc/init.d/nexus"
+  file:
+      src: "{{ nexus_home }}/bin/nexus"
+      dest: /etc/init.d/nexus
+      state: link
+
+- name: "Make nexus script executable"
+  file:
+      path: "{{ nexus_home }}/bin/nexus"
+      mode: "0755"
+
+- name: "Enable nexus service"
+  service:
+      name: nexus
+      enabled: yes
+  notify: restart nexus

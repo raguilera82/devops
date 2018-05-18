@@ -1,0 +1,9 @@
+---
+# file: roles/jenkins/meta/main.yml
+
+dependencies:
+    - { role: java }
+    - { role: maven }
+    - { role: git }
+    - { role: pip }
+    - { role: chrome }

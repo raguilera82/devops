@@ -1,0 +1,5 @@
+---
+
+- name: restart apache
+  become: true
+  shell: "systemctl restart httpd.service"

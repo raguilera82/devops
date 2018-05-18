@@ -1,0 +1,18 @@
+---
+# file: /roles/java/tasks/RedHat_install_jdk.yml
+
+- name: "{{ ansible_os_family }} | JDK | Download Java RPM"
+  shell: "wget -P /tmp -c --header 'Cookie: gpw_e24=xxx; oraclelicense=accept-securebackup-cookie;' '{{ java_rpm_download_jdk_uri }}'"
+
+- name: "{{ ansible_os_family }} | JDK | Install JDK"
+  yum:
+      name: "/tmp/{{ java_jdk }}"
+      state: "present"
+
+- name: "{{ ansible_os_family }} | JDK | Delete Java file"
+  file:
+      path: "/tmp/{{ java_jdk }}"
+      state: "absent"
+
+- name: "{{ ansible_os_family }} | JDK | Set alternatives to use our Java version"
+  command: "alternatives --set java {{ java_jdk_dir }}/jre/bin/java"

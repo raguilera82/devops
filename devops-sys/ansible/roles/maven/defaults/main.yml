@@ -1,0 +1,7 @@
+---
+# file: roles/maven/defaults/main.yml
+
+maven_major_version: "3"
+maven_minor_version: "3.9"
+
+maven_home: "/opt/apache-maven-{{ maven_version }}"

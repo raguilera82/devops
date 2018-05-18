@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  
+  devops-app-master:
+    image: local.nexus.com:8083/devops/app:${APP_VERSION}
+    environment:
+      DATABASE_HOST: 'devops-db-master'
+      DATABASE_PORT: '3306'
+      DATABASE_NAME: 'devops'
+      DATABASE_USER: 'devops'
+      DATABASE_PASS: ${DATABASE_PASS}
+    links:
+    - devops-db-master
+    depends_on:
+    - devops-db-master
+    ports:
+    - "8090:8080"
+    networks:
+    - devops_master
+
+  devops-db-master:
+    image: mysql:5.7
+    volumes:
+      - db_data_master:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: 'devops'
+      MYSQL_USER: 'devops'
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+    - devops_master
+
+volumes:
+  db_data_master:
+
+networks:
+  devops_master:
+  

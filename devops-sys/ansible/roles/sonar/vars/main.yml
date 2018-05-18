@@ -1,0 +1,5 @@
+---
+# file: roles/sonar/vars/main.yml
+
+# DOWNLOAD
+sonar_base_dir: "{{ sonar_home }}"

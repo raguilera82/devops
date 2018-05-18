@@ -1,0 +1,12 @@
+---
+# file: /roles/sonar/tasks/setup.yml
+
+- name: "Setup | Create Sonar group"
+  group:
+      name: "{{ sonar_group }}"
+      state: "present"
+
+- name: "Setup | Create Sonar user"
+  user:
+      name: "{{ sonar_user }}"
+      group: "{{ sonar_group }}"

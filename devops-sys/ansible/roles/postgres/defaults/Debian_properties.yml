@@ -1,0 +1,5 @@
+---
+# file: roles/postgres/defaults/Debian_properties.yml
+
+postgres_pg_conf: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
+postgres_service_name: "postgresql"

@@ -1,0 +1,52 @@
+---
+
+- name: "{{ ansible_os_family }} | Install dependencies"
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - curl
+    - policycoreutils-python
+    - openssh-server
+    - postfix
+
+- name: "{{ ansible_os_family }} | Enabled postfix service"
+  shell: "sudo systemctl enable postfix"
+
+- name: "{{ ansible_os_family }} | Start postfix service"
+  shell: "sudo systemctl start postfix"
+
+- name: "{{ ansible_os_family }} | Enabled sshd service"
+  shell: "sudo systemctl enable sshd"
+
+- name: "{{ ansible_os_family }} | Start sshd service"
+  shell: "sudo systemctl start sshd"
+
+- name: "{{ ansible_os_family }} | Add GitLab package repository"
+  shell: "curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash"
+
+- name: "Install GitLab and define external url: {{ external_url }}"
+  shell: "sudo EXTERNAL_URL=\"{{ external_url }}\" yum install -y gitlab-ce"
+
+- name: Backup configure file
+  become: true
+  shell: cp /etc/gitlab/gitlab.rb /etc/gitlab/gitlab.rb.orig
+
+- name: Change 8080 to 8888
+  become: true
+  replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: "http://localhost:8080"
+    replace: "http://localhost:8888"
+  notify: reconfigure
+  ignore_errors: true
+
+- name: Change unicorn 8080 to 8888
+  become: true
+  replace:
+    path: /etc/gitlab/gitlab.rb
+    regexp: "unicorn\\['port'] = 8080"
+    replace: "unicorn['port'] = 8888"
+  notify: reconfigure
+  ignore_errors: true

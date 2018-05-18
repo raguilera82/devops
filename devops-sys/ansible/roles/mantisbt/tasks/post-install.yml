@@ -1,0 +1,14 @@
+---
+- name: Copy config_inc.php
+  sudo: yes
+  template:
+    src: config_inc.php.j2
+    dest: "{{ mantis_dir }}/config_inc.php"
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Remove admin directory.
+  file:
+    path: "{{ mantis_dir }}/admin"
+    state: absent

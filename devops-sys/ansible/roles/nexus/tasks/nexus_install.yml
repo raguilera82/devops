@@ -1,0 +1,19 @@
+---
+# file: /roles/nexus/tasks/nexus_install.yml
+
+- name: "Download nexus"
+  get_url:
+      url: "{{ nexus_download_url }}"
+      dest: "/tmp/{{ nexus_tar_file }}"
+
+- name: "Extract nexus"
+  command:  "tar -xvzf /tmp/{{ nexus_tar_file }} -C {{ nexus_base_dir }}"
+
+- name: "Update the symbolic link to nexus install"
+  file:
+      path: "{{ nexus_home }}"
+      src: "{{ nexus_base_dir }}/nexus-{{ nexus_version }}"
+      owner: nexus
+      group: nexus
+      state: link
+      force: yes

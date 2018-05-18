@@ -1,0 +1,6 @@
+---
+# file: /roles/sonar/tasks/RedHat_configuration.yml
+
+- name: "Ensure Sonar starts on reboot"
+  command: "chkconfig sonar on"
+  notify: "restart sonar"

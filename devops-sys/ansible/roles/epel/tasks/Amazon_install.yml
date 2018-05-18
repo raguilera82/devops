@@ -1,0 +1,5 @@
+---
+# file: roles/epel/tasks/Amazon_install.yml
+
+- name: "{{ ansible_os_family }} | {{ ansible_distribution }} | Enable EPEL repository"
+  command: "yum-config-manager --enable epel"

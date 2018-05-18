@@ -1,0 +1,16 @@
+---
+mantis_version: 1.2.19
+mantis_file_extension: tar.gz
+mantis_parent_dir: /var/www
+
+mantis_create_db: true
+mantis_install_db: true
+
+mantis_db_name: mantis
+mantis_db_user: mantis
+mantis_db_pass: mantis
+
+mantis_admin_username: administrator
+mantis_admin_real_name: ''
+mantis_admin_email: root@localhost
+mantis_admin_password: root

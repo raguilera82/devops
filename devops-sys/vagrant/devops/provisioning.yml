@@ -1,0 +1,11 @@
+---
+- hosts: all
+  become: yes
+  roles:
+  - role: DovnarAlexander.oracle-java
+    java_major_version: 8
+    java_minor_version: 161
+  - role: geerlingguy.docker
+    when: "ansible_os_family == 'RedHat'"
+    docker_install_compose: true
+    docker_edition: 'ce'

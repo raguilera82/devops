@@ -1,0 +1,24 @@
+---
+
+- name: "Install httpd"
+  yum:
+    name: "httpd"
+    state: "present"
+    update_cache: "yes"
+
+- name: "Disable Apache default welcome page"
+  become: true
+  shell: "sed -i 's/^/#&/g' /etc/httpd/conf.d/welcome.conf"
+
+- name: "Prevent Apache from listing web directory files to visitors"
+  become: true
+  shell: "sed -i 's/Options Indexes FollowSymLinks/Options FollowSymLinks/' /etc/httpd/conf/httpd.conf"
+
+- name: "Start service"
+  become: true
+  shell: "systemctl start httpd.service"
+
+- name: "Enable service"
+  become: true
+  shell: "systemctl enable httpd.service"
+

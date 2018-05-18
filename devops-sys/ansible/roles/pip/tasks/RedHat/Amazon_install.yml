@@ -1,0 +1,8 @@
+---
+# file: roles/pip/tasks/RedHat/Amazon_install.yml
+
+- name: "Upgrade pip"
+  command: "pip install --upgrade pip"
+
+- name: "Add our pip to the alternatives"
+  command: "alternatives --update python /usr/bin/python2.7 --addslave /usr/bin/pip pip /usr/local/bin/pip"

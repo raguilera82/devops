@@ -1,0 +1,5 @@
+---
+# file: /roles/java/tasks/RedHat_install.yml
+
+- name: "{{ ansible_os_family }} | Include tasks to install the JDK"
+  include: "{{ ansible_os_family }}_install_jdk.yml"

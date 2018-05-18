@@ -1,0 +1,25 @@
+---
+# file: roles/jenkins/tasks/Debian_install.yml
+
+- name: "{{ ansible_os_family }} | Install | Add apt key for Jenkins"
+  apt_key:
+      url: "{{ jenkins_apt_key }}"
+      state: "present"
+
+- name: "{{ ansible_os_family }} | Install | Add apt repository for Jenkins"
+  apt_repository:
+      repo: "{{ jenkins_repo }}"
+      state: "present"
+
+# This tasks creates the jenkins user
+- name: "{{ ansible_os_family }} | Install | Install Jenkins"
+  apt:
+      name: "jenkins={{ jenkins_version }}"
+      update_cache: "yes"
+
+- name: "{{ ansible_os_family }} | Install | Add dependency to run npm in jenkins build"
+  apt:
+      name: "libfontconfig1"
+      state: "present"
+      update_cache: "yes"
+  notify: "restart jenkins"

@@ -1,0 +1,24 @@
+# Execute in local
+
+## Raise the mysql database
+$> docker-composer -f docker/test.yml up -d
+
+## Set environment
+Create a .env file with the following content (don't track with git):
+
+export MYSQL_ROOT_PASSWORD=<pass>
+export MYSQL_PASSWORD=<pass>
+export DATABASE_HOST='localhost'
+export DATABASE_PORT='3307'
+export DATABASE_NAME='devops'
+export DATABASE_USER='devops'
+export DATABASE_PASS=<pass>
+
+Modify <pass> with the real password
+
+$> source .env
+
+## Raise the app
+$> mvn spring-boot:run
+
+Check this url: http://localhost:8080/version

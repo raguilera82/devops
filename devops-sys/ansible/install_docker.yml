@@ -1,0 +1,12 @@
+- hosts: int
+  gather_facts: false
+  become: yes
+  vars:
+    - ansible_os_family: RedHat
+    - ansible_distribution: CentOS
+    - docker_install_compose: true
+    - docker_edition: 'ce'
+  roles:
+   - python_minimal
+   - docker
+     

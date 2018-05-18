@@ -1,0 +1,9 @@
+---
+# file: /roles/postgres/task/main.yml
+
+- include_vars: "{{ role_path }}/defaults/{{ ansible_os_family }}_properties.yml"
+
+- include: "{{ ansible_os_family }}_install.yml"
+
+- include: "setup.yml"
+  when: ansible_distribution != 'Amazon'

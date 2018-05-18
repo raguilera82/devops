@@ -1,0 +1,9 @@
+---
+# file: roles/postgres/defaults/main.yml
+
+postgres_major_version: "{{ postgresql_major_version }}"
+postgres_minor_version: "{{ postgresql_minor_version }}"
+postgres_version: "{{ postgres_major_version }}.{{ postgres_minor_version }}"
+
+postgres_reserved_connections: 5
+postgres_max_connections: 200

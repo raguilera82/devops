@@ -1,0 +1,11 @@
+---
+# file: roles/nexus/defaults/main.yml
+
+nexus_version: "3.6.0-02"
+nexus_tar_file: "nexus-{{ nexus_version }}-unix.tar.gz"
+nexus_download_url: "http://download.sonatype.com/nexus/3/{{ nexus_tar_file }}"
+
+nexus_base_dir: /opt
+nexus_home: /opt/nexus
+
+nexus_data_dir: "{{ nexus_data }}"

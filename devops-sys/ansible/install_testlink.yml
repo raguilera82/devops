@@ -1,0 +1,28 @@
+- hosts: int
+  gather_facts: false
+  become: yes
+  vars:
+    - ansible_os_family: RedHat
+    - ansible_distribution: CentOS
+    - mysql_root_password: root
+    - mysql_root_username: root
+    - php_major_version: 7
+    - php_minor_version: 1
+    - php_version: "{{ php_major_version }}{{ php_minor_version }}"
+    - php_packages:
+      - "mod_php{{ php_version }}w"
+      - "php{{ php_version }}w"
+      - "php{{ php_version }}w-mysqlnd"
+      - "php{{ php_version }}w-common"
+      - "php{{ php_version }}w-gd"
+      - "php{{ php_version }}w-ldap"
+      - "php{{ php_version }}w-cli"
+      - "php{{ php_version }}w-mcrypt"
+      - "php{{ php_version }}w-xml"
+      - "php{{ php_version }}w-fpm"
+      - "php{{ php_version }}w-opcache"
+        
+  roles:
+   - python_minimal
+   - testlink
+     

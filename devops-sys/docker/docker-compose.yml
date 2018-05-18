@@ -1,0 +1,114 @@
+version: '3.3'
+
+services:
+
+  sonar:
+    image: sonarqube:lts-alpine
+    volumes:
+      - sonarqube-data:/opt/sonarqube:delegated
+    ports:
+      - 9000:9000
+      - 9092:9092
+    networks:
+      ci-network:
+
+  nexus:
+    image: sonatype/nexus3
+    volumes:
+      - nexus-data:/nexus-data:delegated
+    ports:
+      - 8081:8081
+      - 5000:5000
+    networks:
+      ci-network:
+
+  jenkins:
+    image: devel/jenkins:lts-alpine
+    depends_on:
+      - jenkins-setup
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jenkins-data:/var/jenkins_home:delegated
+      - ./jenkins/settings.xml:/usr/share/jenkins/ref/settings.xml
+    ports:
+      - 8082:8080
+      - 50000:50000
+    networks:
+      ci-network:
+    secrets:
+      - jenkins-user
+      - jenkins-pass
+
+  # This service run just once, and it's necesary to ensures that `.m2` directory exists
+  # and you can mount `settings.xml` file inside it.
+  # You can't copy `settings.xml` dile in build phase because the Jenkins Dockerfile base image defines a volume
+  # in the Jenkins Home, so every change you do in build time is lost.
+  # You can't mount (_bind_ really) directly `settings.xml` because this action override `.m2`
+  # whit root permissions, so afterward you can not write in `.m2`.
+  # So the trick here is that we create the `.m2` directory with `jenkins` user and make a symbolic link. After that
+  # we will mount our `settings.xml` in the other side of the simbolic link so we will not get permissions problems.
+  jenkins-setup:
+    image: devel/jenkins:lts-alpine
+    depends_on:
+      - jenkins-docker
+    volumes:
+      - jenkins-data:/var/jenkins_home:delegated
+      - ./jenkins/prepare-m2-directory.sh:/usr/share/jenkins/ref/prepare-m2-directory.sh
+    command: "/usr/share/jenkins/ref/prepare-m2-directory.sh"
+
+  # This service run just once, and it's necesary to ensures that user `jenkins`
+  # has permissions to use the Docker's socket inside the guest.
+  # You can not do that when build the image because when the volume is mount, the permissions are overriden.
+  # If you change the permissions with `exec` when the volumen is mount,
+  # the permissions are lost every time the Docker daemon is restarted.
+  # So, this service ensures that every time you run the service `jenkins` 
+  # the Docker's socket has the correct permissions.
+  jenkins-docker:
+    build: ./jenkins
+    image: devel/jenkins:lts-alpine
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    user: root
+    command: "chgrp jenkins /var/run/docker.sock"
+
+  # This service allow you access to sonar, nexus and jenkins using port 80.
+  # This service has an alias with the complete hostname that represent each one of the other services,
+  # because inside the Docker network, every call to the complete hostname should be attended by this Nginx.
+  nginx:
+    image: nginx:1.13-alpine
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:delegated
+    ports:
+      - "80:80"
+    networks:
+      ci-network:
+        aliases: 
+          - sonar.autentia.com
+          - nexus.autentia.com
+          - jenkins.autentia.com
+
+  postgre:
+    image: postgres:9-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data:delegated
+    ports:
+      - 5432:5432
+    networks:
+      ci-network:
+        aliases: 
+          - ddbb.openidserver.autentia.com
+
+volumes:
+  nexus-data:
+  sonarqube-data:
+  jenkins-data:
+  pgdata:
+
+networks:
+  ci-network:
+
+secrets:
+  jenkins-user:
+    file: ./jenkins/jenkins-user.txt
+  jenkins-pass:
+    file: ./jenkins/jenkins-pass.txt

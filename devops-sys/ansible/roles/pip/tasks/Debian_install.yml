@@ -1,0 +1,11 @@
+---
+# file: roles/pip/tasks/Debian_install.yml
+
+- name: "{{ ansible_os_family }} | Install easy_install"
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+      - python-dev
+      - python-setuptools

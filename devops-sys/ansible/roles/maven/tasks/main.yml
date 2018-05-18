@@ -1,0 +1,11 @@
+---
+# file: /roles/maven/tasks/Debian_install.yml
+
+- name: "Check if Maven is already installed"
+  stat:
+      path: "/opt/maven/bin/mvn"
+  register: "mvn_cmd"
+
+- name: "Include install.yml"
+  include: install.yml
+  when: mvn_cmd.stat.exists == false

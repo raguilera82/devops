@@ -1,0 +1,9 @@
+---
+
+- name: Install Python minimal if needed
+  become: yes
+  raw: bash -c "test -e /usr/bin/python || apt install -y python-minimal"
+  register: output
+  changed_when:
+    - output.stdout != ""
+    - output.stdout != "\r\n"

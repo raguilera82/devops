@@ -1,0 +1,16 @@
+---
+# file: roles/sonar/defaults/main.yml
+
+# SETUP
+sonar_user: "sonar"
+sonar_group: "sonar"
+
+# INSTALL
+sonar_version: '5.6.7'
+sonar_download_url: "https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-{{sonar_version}}.zip"
+sonar_archive: "sonar.zip"
+sonar_version_dir: "sonarqube-{{sonar_version}}"
+
+# DABATASE
+sonar_postgresql_db_enabled: true
+sonar_database_port: 5432

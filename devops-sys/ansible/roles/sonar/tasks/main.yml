@@ -1,0 +1,26 @@
+---
+# file: /roles/sonar/tasks/main.yml
+
+# SETUP
+- include: setup.yml
+
+# INSTALL
+- name: "Install | Check if Sonar is already installed"
+  stat:
+      path: "{{ sonar_home }}/bin/linux-x86-64/sonar.sh"
+  register: "sonar_script"
+
+- include: install.yml
+  when: sonar_script.stat.exists == false
+
+# CONFIGURATION
+- include: configuration.yml
+
+- name: "Check if {{ ansible_os_family }} configuration exists"
+  become: No
+  local_action: stat path="{{ role_path }}/tasks/{{ ansible_os_family }}_configuration.yml"
+  register: "os_config"
+
+- name: "Include {{ ansible_os_family }}_configuration.yml"
+  include: "{{ ansible_os_family }}_configuration.yml"
+  when: os_config.stat.exists

@@ -1,0 +1,7 @@
+---
+# file: /roles/unzip/tasks/Ubuntu_install.yml
+
+- name: install unzip command
+  apt:
+      name: unzip
+      state: present

@@ -1,0 +1,28 @@
+---
+# file: roles/php/tasks/main.yml
+
+- name: "Add Webstatic repository to get PHP"
+  yum:
+    name: "https://mirror.webtatic.com/yum/el7/webtatic-release.rpm"
+    state: "installed"
+
+- name: "Install PHP"
+  yum:
+    name: "{{ item }}"
+  with_items:
+      - "{{ php_packages }}"
+
+- name: "Check that php is enabled"
+  command: "php --version"
+
+- name: "Change address configuration of php-fpm config file"
+  lineinfile:
+      dest: "/etc/php-fpm.d/www.conf"
+      line: "; listen.allowed_clients = 127.0.0.1"
+      regexp: "listen.allowed_clients\\s.*=\\s.*127.0.0.1"
+      state: "present"
+
+- name: "restart php services"
+  service:
+      name: "php-fpm"
+      state: "restarted"

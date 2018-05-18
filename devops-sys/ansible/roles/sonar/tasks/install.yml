@@ -1,0 +1,31 @@
+---
+# file: /roles/sonar/tasks/install.yml
+
+- name: "Install | Download Sonar"
+  get_url:
+      url: "{{ sonar_download_url }}"
+      dest: "/tmp/{{ sonar_archive }}"
+
+- name: "Install | Extract Sonar"
+  unarchive:
+      src: "/tmp/{{ sonar_archive }}"
+      dest: "/opt"
+      copy: "no"
+      creates: "yes"
+
+- name: "Install | Move Sonar to its right place"
+  shell: "mv /opt/{{ sonar_version_dir }} {{ sonar_home }} chdir=/opt"
+  register: "result"
+  failed_when: "'Directory not empty' not in result.stderr and '' != result.stderr"
+
+- name: "Install | Change ownership of Sonar home"
+  file:
+      path: "{{ sonar_home }}"
+      owner: sonar
+      group: sonar
+      recurse: yes
+
+- name: "Install | Delete Sonar zip"
+  file:
+      path: "/tmp/{{ sonar_archive }}"
+      state: "absent"

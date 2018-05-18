@@ -1,0 +1,24 @@
+---
+# file: /roles/java/tasks/Debian_install.yml
+
+- name: "{{ ansible_os_family }} | Install | Add Java repository to sources"
+  apt_repository:
+      repo: "{{ java_repository }}"
+
+- name: "{{ ansible_os_family }} | Install | Autoaccept license for Java"
+  debconf:
+      name: "oracle-java8-installer"
+      question: "shared/accepted-oracle-license-v1-1"
+      value: "true"
+      vtype: "select"
+
+- name: "{{ ansible_os_family }} | Install | Install Java 8"
+  apt:
+      name: "oracle-java8-installer"
+      state: "latest"
+      install_recommends: "yes"
+      update_cache: "yes"
+
+- name: "{{ ansible_os_family }} | Install | Set default environment variable"
+  apt:
+      name: "oracle-java8-set-default"

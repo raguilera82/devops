@@ -1,0 +1,7 @@
+---
+# file: /roles/nexus/handlers/main.yml
+
+- name: restart nexus
+  service:
+      name: nexus
+      state: restarted

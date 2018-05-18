@@ -1,0 +1,7 @@
+---
+# file: /roles/unzip/tasks/RedHat_install.yml
+
+- name: install unzip command
+  yum:
+      name: unzip
+      state: present

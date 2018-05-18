@@ -1,0 +1,23 @@
+- hosts: int
+  gather_facts: false
+  become: yes
+  vars:
+    - ansible_os_family: RedHat
+    - ansible_distribution: CentOS
+    - sonar_version_dir: 'sonarqube-5.6.7'
+    - sonar_home: /opt/sonarqube
+    - postgresql_major_version: 9
+    - postgresql_minor_version: 4
+    - profile: 'development'
+    - database_name: 'sonar'
+    - database_user: 'sonar'
+    - database_password: 'sonar'
+    - database_host: 'localhost'
+    - database_port: '5432'
+    - install_java: false
+        
+  roles:
+   - python_minimal
+   - postgres
+   - sonar
+     

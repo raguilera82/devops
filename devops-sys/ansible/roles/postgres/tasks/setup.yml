@@ -1,0 +1,35 @@
+---
+# file: /roles/postgres/task/setup.yml
+
+- name: "Ensure client's encoding is UTF-8"
+  lineinfile:
+      dest: "{{ postgres_pg_conf }}"
+      backup: yes
+      insertafter: "#client_encoding = sql_ascii"
+      line: "client_encoding = utf8"
+
+- name: "Ensure default port is available"
+  lineinfile:
+      name: "{{ postgres_pg_conf }}"
+      line: "port = 5432"
+      regexp: "^#port\\s*=.*$"
+
+- name: "Ensure databases accepts max connections"
+  become_user: postgres
+  lineinfile:
+      name: "{{ postgres_pg_conf }}"
+      line: "max_connections = {{ (postgres_max_connections | int) + (postgres_reserved_connections | int) }}"
+      regexp: "^max_connections\\s*=.*$"
+
+- name: "DEVELOPMENT | Ensure that PostgresSQL is accesible from other hosts"
+  lineinfile:
+      dest: "{{ postgres_pg_conf }}"
+      insertafter: "#listen_addresses = 'localhost'"
+      line: "listen_addresses = '*'    # Development environment!!!"
+  when: profile == "development"
+
+# The restart task won´t be a handler because this will broken the deploy restarting postgresql at the end of the PLAYBOOK instead of the end of the role
+- name: "restart postgresql"
+  service:
+    name: "{{ postgres_service_name }}"
+    state: restarted

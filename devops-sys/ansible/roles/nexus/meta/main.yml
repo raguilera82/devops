@@ -1,0 +1,5 @@
+---
+# file: roles/nexus/meta/main.yml
+
+dependencies:
+    - { role: java }

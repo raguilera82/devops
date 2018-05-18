@@ -1,0 +1,18 @@
+---
+# file: roles/java/defaults/RedHat_properties.yml
+
+java_version: "{{ java_minor_version }}u{{ java_version_update }}"
+java_version_with_build: "{{ java_version }}-b{{ java_version_build }}"
+
+# JRE
+java_rpm_download_jre_uri: "http://download.oracle.com/otn-pub/java/jdk/{{ java_version_with_build }}/{{ java_hash }}/jre-{{ java_version }}-linux-x64.rpm"
+java_jre: "jre-{{ java_version }}-linux-x64.rpm"
+java_jre_dir: "/usr/java/jre1.{{ java_minor_version }}.0_{{ java_version_update }}"
+java_jre_security_dir: "{{ java_jre_dir }}/lib/security"
+
+# JDK
+
+java_rpm_download_jdk_uri: "http://download.oracle.com/otn-pub/java/jdk/{{ java_version_with_build }}/{{ java_hash }}/jdk-{{ java_version }}-linux-x64.rpm"
+java_jdk: "jdk-{{ java_version }}-linux-x64.rpm"
+java_jdk_dir: "/usr/java/jdk1.{{ java_minor_version }}.0_{{ java_version_update }}"
+java_jdk_security_dir: "{{ java_jdk_dir }}/jre/lib/security"

@@ -1,0 +1,6 @@
+---
+# file: /roles/nexus/tasks/main.yml
+
+- include: nexus_setup.yml
+- include: nexus_install.yml
+- include: nexus_configuration.yml

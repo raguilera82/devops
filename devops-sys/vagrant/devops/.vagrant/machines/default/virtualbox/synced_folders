@@ -1,0 +1,1 @@
+{"virtualbox":{"/vagrant_data":{"guestpath":"/vagrant_data","hostpath":"/home/rulusoft/Projects/Autentia/Devops/devops-sys/vagrant/devops","disabled":false,"__vagrantfile":true},"vagrant-notify":{"id":"vagrant-notify","guestpath":"/tmp/vagrant-notify","hostpath":"/tmp/vagrant-notify/9f732aa98ddb498aa5911bddf9584266","disabled":false,"__vagrantfile":true}}}

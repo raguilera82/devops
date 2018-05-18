@@ -1,0 +1,4 @@
+---
+# file: roles/epel/tasks/main.yml
+
+- include: "{{ ansible_distribution }}_install.yml"

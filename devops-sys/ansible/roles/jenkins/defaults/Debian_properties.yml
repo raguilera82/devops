@@ -1,0 +1,9 @@
+---
+# file: roles/jenkins/defaults/main.yml
+
+jenkins_apt_key: "https://pkg.jenkins.io/debian/jenkins-ci.org.key"
+jenkins_repo: "deb http://pkg.jenkins-ci.org/debian binary/"
+
+jenkins_version: "2.8"
+
+jenkins_config_file_location: "/etc/default/jenkins"

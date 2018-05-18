@@ -1,0 +1,20 @@
+---
+# file: roles/epel/tasks/CentOS_install.yml
+
+- name: "{{ ansible_os_family }} | {{ ansible_distribution }} | Add EPEL repository"
+  yum:
+      name: "epel-release"
+      state: "present"
+      update_cache: "yes"
+
+- name: Add epel repository
+  yum_repository:
+    name: "epel"
+    description: "Extra Packages for Enterprise Linux 7 - $basearch"
+    baseurl: "http://download.fedoraproject.org/pub/epel/7/$basearch"
+    mirrorlist: "https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch"
+    failovermethod: "priority"
+    gpgkey: "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7"
+    gpgcheck: yes
+    state: present
+    enabled: yes

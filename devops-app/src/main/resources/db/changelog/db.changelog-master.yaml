@@ -1,0 +1,119 @@
+databaseChangeLog:
+  - changeSet:
+      id: CreateMainTables
+      author: autentia
+      changes:
+      - createTable:
+          tableName: city
+          columns:
+          - column:
+              name: id
+              type: int
+              autoIncrement: true
+              incrementBy: 1
+              startWith: 10
+              constraints:
+                primaryKey: true
+                nullable: false
+          - column:
+              name: name
+              type: varchar(255)
+              constraints:
+                primaryKey: true
+                nullable: false
+      - createTable:
+          tableName: airport
+          columns:
+          - column:
+              name: code
+              type: varchar(3)
+              constraints:
+                primaryKey: true
+                nullable: false
+          - column:
+              name: name
+              type: varchar(255)
+              constraints:
+                nullable: false
+          - column:
+              name: city
+              type: int
+              constraints:
+                nullable: false
+  - changeSet: 
+      id: AddFKConstraints
+      author: autentia
+      changes:
+      - addForeignKeyConstraint:
+          baseColumnNames: city
+          baseTableName: airport
+          constraintName: fk_airport_city
+          referencedColumnNames: id
+          referencedTableName: city
+  - changeSet: 
+      id: CreateIndexes
+      author: autentia
+      changes:
+      - createIndex:
+          columns:
+          - column:
+              name: name
+              type: varchar(255)
+          indexName: idx_airport_name
+          tableName: airport
+          unique: true
+  - changeSet:
+      id: AddingData
+      author: autentia
+      changes:
+      - insert:
+          tableName: city
+          columns:
+          - column:
+              name: id
+              value: 1
+          - column:
+              name: name
+              value: Nueva York
+      - insert:
+          tableName: city
+          columns:
+          - column:
+              name: id
+              value: 2
+          - column:
+              name: name
+              value: Madrid
+      - insert:
+          tableName: city
+          columns:
+          - column:
+              name: id
+              value: 3
+          - column:
+              name: name
+              value: Bilbao
+      - insert:
+          tableName: airport
+          columns:
+          - column:
+              name: code
+              value: MAD
+          - column:
+              name: name
+              value: Madrid Barajas
+          - column:
+              name: city
+              value: 2
+      - insert:
+          tableName: airport
+          columns:
+          - column:
+              name: code
+              value: BIO
+          - column:
+              name: name
+              value: Sondika
+          - column:
+              name: city
+              value: 3

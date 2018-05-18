@@ -1,0 +1,21 @@
+---
+# file: /roles/postgres/task/RedHat/CentOS_install.yml
+
+- name: "{{ ansible_os_family }} | Ensure PostgreSQL starts on reboot"
+  command: "chkconfig {{ postgres_service_name }} on"
+
+- name: "{{ ansible_os_family }} | Initialize the database configuration"
+  command: "/usr/pgsql-{{ postgres_version }}/bin/postgresql{{ postgres_major_version }}{{ postgres_minor_version }}-setup initdb"
+  register: result
+  failed_when: "'Data directory is not empty!' not in result.stdout and 'Initializing database ... OK' not in result.stdout"
+
+- name: "{{ ansible_os_family }} | Ensure that PostgreSQL is started"
+  service:
+    name: "{{ postgres_service_name }}"
+    state: "started"
+
+# The restart task won´t be a handler because this will broken the deploy restarting postgresql at the end of the PLAYBOOK instead of the end of the role
+- name: "restart postgresql"
+  service:
+    name: "{{ postgres_service_name }}"
+    state: restarted

@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  
+  devops-web-develop:
+    image: local.nexus.com:8083/devops/devops-web:${APP_VERSION}
+    ports:
+    - "8993:80"
+    networks:
+    - devops-web-develop
+
+networks:
+  devops-web-develop:

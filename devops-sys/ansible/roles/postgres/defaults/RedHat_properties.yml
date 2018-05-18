@@ -1,0 +1,5 @@
+---
+# file: roles/postgres/defaults/RedHat_properties.yml
+
+postgres_pg_conf: "/var/lib/pgsql/{{ postgres_version }}/data/postgresql.conf"
+postgres_service_name: "postgresql-{{ postgres_version }}"

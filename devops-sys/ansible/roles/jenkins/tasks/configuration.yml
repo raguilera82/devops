@@ -1,0 +1,9 @@
+---
+# file: roles/jenkins/tasks/configuration.yml
+
+- name: "Create .m2 folder"
+  file:
+      path: "{{ jenkins_base_dir }}/.m2"
+      state: "directory"
+      owner: "jenkins"
+      group: "jenkins"

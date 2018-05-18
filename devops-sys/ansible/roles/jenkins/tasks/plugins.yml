@@ -1,0 +1,18 @@
+---
+# file: roles/jenkins/tasks/plugins.yml
+
+- name: "Plugins | Create plugins directory"
+  file:
+      path: "{{ jenkins_base_dir }}/plugins"
+      state: "directory"
+      owner: "jenkins"
+      group: "jenkins"
+
+- name: "Plugins | Ensure plugins are present"
+  get_url:
+      url: "{{ jenkins_plugins_url }}/{{ item }}.hpi"
+      dest: "{{ jenkins_base_dir }}/plugins/{{ item }}.jpi"
+      owner: "jenkins"
+      group: "jenkins"
+  with_items: "{{ jenkins_plugins }}"
+  notify: restart jenkins

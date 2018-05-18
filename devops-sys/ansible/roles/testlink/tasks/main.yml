@@ -1,0 +1,72 @@
+---
+
+- name: Save a copy to /etc/php.ini
+  become: true
+  shell: "cp /etc/php.ini /etc/php.ini.bak"
+
+- name: Change maxlifetime to optimize
+  become: true
+  shell: "sed -i \"s/session.gc_maxlifetime = 1440/session.gc_maxlifetime = 2880/\" /etc/php.ini"
+
+- name: Change max_execution_time
+  become: true
+  shell: "sed -i \"s/max_execution_time = 30/max_execution_time = 120/\" /etc/php.ini"
+
+- name: "Download testlink {{ testlink_version }}"
+  become: true
+  get_url:
+    url: "https://github.com/TestLinkOpenSourceTRMS/testlink-code/archive/{{ testlink_version }}.tar.gz"
+    dest: "/home/vagrant/testlink-code-{{ testlink_version }}.tar.gz"
+    mode: 0775
+
+- name: "Unarchive to /var/www/html"
+  become: true
+  shell: "tar -zxvf /home/vagrant/testlink-code-{{ testlink_version }}.tar.gz -C /var/www/html"
+  #unarchive:
+  #  src: "/home/vagrant/testlink-code-{{ testlink_version }}.tar.gz"
+  #  dest: "/var/www/html/testlink-code-{{ testlink_version }}"
+
+- name: "Create a database"
+  mysql_db:
+    login_user: "{{ mysql_root_username }}"
+    login_password: "{{ mysql_root_password }}"
+    name: testlink
+    state: present
+
+- name: "Create user"
+  mysql_user:
+    login_user: "{{ mysql_root_username }}"
+    login_password: "{{ mysql_root_password }}"
+    name: testlink
+    password: '{{ user_password }}'
+    priv: 'testlink.*:ALL'
+    host: localhost
+    state: present
+
+- name: "Change permissions to apache user"
+  become: true
+  file:
+    path: "/var/www/html/testlink-code-{{ testlink_version }}"
+    owner: apache
+    recurse: yes
+
+- name: "Create a custom configuration file for TestLink"
+  become: true
+  shell: "cp /var/www/html/testlink-code-{{ testlink_version }}/custom_config.inc.php.example /var/www/html/testlink-code-{{ testlink_version }}/custom_config.inc.php"
+  #copy:
+   # src: ""
+   # dest: ""
+
+- name: Add custom config with logs and upload area changes
+  template:
+    src: "custom_config.inc.j2"
+    dest: "/var/www/html/testlink-code-{{ testlink_version }}/custom_config.inc.php"
+
+- name: Add apache vhosts configuration.
+  template:
+    src: "{{ apache_vhost_template }}"
+    dest: /etc/httpd/conf.d/testlink.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache

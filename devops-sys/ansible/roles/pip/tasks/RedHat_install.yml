@@ -1,0 +1,11 @@
+---
+# file: roles/pip/tasks/RedHat_install.yml
+
+- name: "{{ ansible_os_family }} | Install easy_install"
+  yum:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+      - python-setuptools-devel
+      - python-setuptools

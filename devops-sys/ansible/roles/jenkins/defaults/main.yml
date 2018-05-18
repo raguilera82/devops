@@ -1,0 +1,20 @@
+---
+# file: roles/jenkins/defaults/main.yml
+
+jenkins_plugins_url: "http://updates.jenkins-ci.org/latest"
+
+jenkins_base_dir: "{{ jenkins_home }}"
+jenkins_port: 8080
+
+jenkins_plugins:
+    #- sonar
+    #- github-oauth
+    - credentials
+    #- git-client
+    - scm-api
+    - git
+    #- github
+    #- ansicolor
+
+jenkins_node_version: 7.2.0
+jenkins_gulp_version: 3.9.1

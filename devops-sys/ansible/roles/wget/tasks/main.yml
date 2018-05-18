@@ -1,0 +1,10 @@
+---
+# file: roles/wget/tasks/main.yml
+
+- name: "Check if {{ ansible_os_family }} specific properties exists"
+  become: No
+  local_action: stat path="{{ role_path }}/tasks/{{ ansible_os_family }}_install.yml"
+  register: "os_specific_install"
+
+- include: "{{ role_path }}/tasks/{{ ansible_os_family }}_install.yml"
+  when: "os_specific_install.stat.exists"

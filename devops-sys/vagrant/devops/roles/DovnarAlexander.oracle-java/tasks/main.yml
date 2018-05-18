@@ -1,0 +1,18 @@
+---
+# file: tasks/main.yml
+
+- name: Check all required variables.
+  import_tasks: check-vars.yml
+
+- name: Set all required facts.
+  import_tasks: set-facts.yml
+
+- name: Prepare instance.
+  import_tasks: prepare.yml
+
+- name: Install Oracle JDK.
+  include_tasks: install.yml
+  when: not java_version_found
+
+- name: Configure Oracle JDK.
+  import_tasks: configure.yml

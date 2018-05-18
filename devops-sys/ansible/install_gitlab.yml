@@ -1,0 +1,11 @@
+- hosts: int
+  gather_facts: false
+  become: yes
+  vars:
+    - ansible_os_family: RedHat
+    - ansible_distribution: CentOS
+    - external_url: 'http://10.0.0.82:8082'
+  roles:
+   - python_minimal
+   - gitlab
+     

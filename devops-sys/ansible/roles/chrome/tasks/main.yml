@@ -1,0 +1,18 @@
+---
+# file: roles/chrome/tasks/main.yml
+
+- name: "Add chrome repository"
+  yum_repository:
+    name: "google-chrome"
+    description: "Google Chrome repository"
+    baseurl: "http://dl.google.com/linux/chrome/rpm/stable/$basearch"
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: "https://dl-ssl.google.com/linux/linux_signing_key.pub"
+    state: present
+
+- name: "Install Chrome"
+  yum:
+    name: "google-chrome-stable"
+    state: "present"
+    

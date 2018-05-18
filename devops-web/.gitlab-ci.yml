@@ -1,0 +1,146 @@
+stages:
+  - login
+  - build-test
+  - publish-doc
+  - deploy
+  - run
+  - qa
+  - clean
+
+login:
+  stage: login
+  script:
+    - docker login -u $DR_USER -p $DR_PASS $DR_URL
+  only:
+    - develop
+    - master
+    - /^release.*$/
+  tags:
+    - shell
+
+build-test:
+  stage: build-test
+  image: local.nexus.com:8083/devops/xvfb:2
+  script:
+    - npm install
+    - npm run test:xvfb
+    - npm run e2e:xvfb
+    - npm run doc -- --disableCoverage
+    - npm run build -- --prod --build-optimizer
+  artifacts:
+    paths:
+      - coverage/
+      - dist/
+      - documentation/
+  only:
+    - develop
+    - master
+    - /^release.*$/
+  tags:
+    - docker
+
+publish-doc:
+  stage: publish-doc
+  script:
+    - mkdir doc
+    - mv documentation doc/
+    - mv coverage doc/
+  dependencies:
+    - build-test
+  artifacts:
+    paths:
+      - doc/
+  only:
+    - develop
+    - /^release.*$/
+  tags:
+    - shell
+
+deploy:
+   stage: deploy
+   script:
+     - "PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')"
+     - ./scripts/deploy-nexus.sh $PACKAGE_VERSION $NPM_USER $NPM_PASS $NPM_URL $DR_USER $DR_PASS $DR_URL $CI_PROJECT_PATH $CI_PROJECT_PATH_SLUG 
+   dependencies:
+     - publish-doc
+     - build-test
+   only:
+    - develop
+    - master
+    - /^release.*$/
+   tags:
+     - shell
+
+run-master:
+  stage: run
+  script:
+    - "PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')"
+    - echo APP_VERSION=${PACKAGE_VERSION} > .env 
+    - docker-compose -p master -f docker/master.yml down --rmi 'all'
+    - docker-compose -p master -f docker/master.yml up -d
+  only:
+    - master
+  tags:
+    - shell
+  environment:
+    name: produccion
+    url: http://local.gitlab.com:8989
+
+run-develop:
+  stage: run
+  script:
+    - "PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')"
+    - echo APP_VERSION=${PACKAGE_VERSION} > .env 
+    - docker-compose -p develop -f docker/develop.yml down --rmi 'all'
+    - docker-compose -p develop -f docker/develop.yml up -d
+  only:
+    - develop
+  tags:
+    - shell
+  environment:
+    name: integration
+    url: http://local.gitlab.com:8993
+
+run-releases:
+  stage: run
+  script:
+    - "PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')"
+    - echo APP_VERSION=${PACKAGE_VERSION} > .env 
+    - docker-compose -p releases -f docker/releases.yml down --rmi 'all'
+    - docker-compose -p releases -f docker/releases.yml up -d
+  only:
+    - /^release.*$/
+  tags:
+    - shell
+  environment:
+    name: pre-produccion
+    url: http://local.gitlab.com:8994
+
+sonar:
+  stage: qa
+  image: local.nexus.com:8083/devops/sonar-scanner:3.0.3.778-linux
+  variables:
+    SONAR_URL: http://local.sonarqube.com:9000
+    SONAR_PROJECT_KEY: $CI_PROJECT_NAME
+    SONAR_PROJECT_NAME: $CI_PROJECT_NAME 
+  script:
+    - "PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')"
+    - /usr/bin/sonar-scanner-run.sh -Dsonar.projectVersion=$PACKAGE_VERSION
+  only:
+    - develop
+    - master
+    - /^release.*$/
+  tags:
+    - docker
+
+clean:
+  stage: clean
+  script:
+    - docker image prune -fa
+  only:
+    - develop
+    - master
+    - /^release.*$/
+  tags:
+    - shell
+

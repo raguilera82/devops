@@ -1,0 +1,5 @@
+---
+# file: roles/php/meta/main.yml
+
+dependencies:
+    - { role: epel, when: ansible_os_family == 'RedHat' }

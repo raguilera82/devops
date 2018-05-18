@@ -1,0 +1,12 @@
+---
+# file: roles/php/defaults/main.yml
+
+php_major_version: 7
+php_minor_version: 0
+php_version: "{{ php_major_version }}{{ php_minor_version }}"
+
+php_packages:
+    - "php{{ php_version }}w"
+    - "php{{ php_version }}w-fpm"
+    - "php{{ php_version }}w-opcache"
+    - "php{{ php_version }}w-mysql"
